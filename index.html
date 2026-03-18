@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>உங்கள் ஆசிரியர் v3.0</title>
+    
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#1976D2">
+    <link rel="icon" href="20260315_085358.png">
+    <link rel="apple-touch-icon" href="20260315_085358.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    
+    <style>
+/* ════════════════════════════════════════════
+   UNGAL AASIRIYAR — Premium 2025 Theme
+   Deep Navy + Electric Blue + Gold Accent
+   Clean white cards · Glassmorphism header
+════════════════════════════════════════════ */
+:root {
+  --p1: #0A1929;   /* deep navy bg */
+  --p2: #0D47A1;   /* rich blue */
+  --p3: #1565C0;   /* primary blue */
+  --p4: #1976D2;   /* medium blue */
+  --p5: #42A5F5;   /* sky accent */
+  --gold: #FFB300; /* gold accent */
+  --gold2:#FF8F00;
+  --bg:  #F4F7FF;  /* screen bg */
+  --card:#FFFFFF;
+  --text:#0A1929;
+  --sub: #546E8A;
+  --bdr: #D0E4FF;
+  --ok:  #16a34a;
+  --err: #ef4444;
+}
+
+*, *::before, *::after { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html { height:100%; overflow:hidden; }
+body {
+  font-family:'Nunito',sans-serif;
+  background:var(--p1);
+  display:flex; flex-direction:column;
+  height:100%; min-height:100vh; min-height:100dvh;
+  margin:0; padding:0; overflow:hidden;
+  user-select:none; -webkit-user-select:none;
+}
+
+/* ── SPLASH ── */
+#splash-screen {
+  position:fixed; inset:0; z-index:99999;
+  background: linear-gradient(145deg,#050E1C 0%,#0A1929 30%,#0D47A1 70%,#1976D2 100%);
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  transition:opacity 0.5s ease;
+}
+#splash-screen::before {
+  content:''; position:absolute; inset:0;
+  background:
+    radial-gradient(circle at 80% 10%, rgba(255,179,0,0.15) 0%, transparent 50%),
+    radial-gradient(circle at 15% 85%, rgba(66,165,245,0.12) 0%, transparent 45%);
+}
+#splash-screen.hide { opacity:0; pointer-events:none; }
+.splash-logo {
+  width:108px; height:108px; border-radius:28px;
+  box-shadow:0 0 0 4px rgba(255,179,0,0.4), 0 20px 60px rgba(0,0,0,0.4);
+  animation:splashBeat 1.6s ease infinite alternate;
+  position:relative; z-index:1;
+  background:#fff;
+}
+@keyframes splashBeat {
+  from { transform:scale(1); box-shadow:0 0 0 4px rgba(255,179,0,0.4),0 20px 60px rgba(0,0,0,0.4); }
+  to   { transform:scale(1.06); box-shadow:0 0 0 8px rgba(255,179,0,0.2),0 24px 80px rgba(0,0,0,0.5); }
+}
+.splash-title {
+  color:#fff; font-size:28px; font-weight:900; margin-top:20px;
+  letter-spacing:0.5px; position:relative; z-index:1;
+  text-shadow:0 2px 16px rgba(0,0,0,0.3);
+}
+.splash-sub { color:rgba(255,255,255,0.7); font-size:13px; font-weight:700; margin-top:6px; position:relative; z-index:1; }
+.splash-loader {
+  margin-top:44px; width:44px; height:44px;
+  border:4px solid rgba(255,255,255,0.15);
+  border-top-color:var(--gold); border-radius:50%;
+  animation:spin 0.85s linear infinite; position:relative; z-index:1;
+}
+@keyframes spin { to { transform:rotate(360deg); } }
+
+/* ── APP SHELL ── */
+#app-shell {
+  flex:1; display:flex; flex-direction:column;
+  height:100%; overflow:hidden;
+  max-width:480px; margin:0 auto; width:100%;
+  background:var(--bg);
+  box-shadow:0 0 80px rgba(0,0,0,0.5);
+}
+@media(min-width:480px) {
+  body {
+    background:linear-gradient(145deg,#050E1C,#0A1929,#0D47A1);
+    align-items:center; justify-content:center;
+  }
+  #app-shell {
+    border-radius:28px;
+    overflow:hidden;
+    max-height:95vh; max-height:95dvh;
+  }
+}
+
+/* ── HEADER ── */
+#app-header {
+  background:linear-gradient(135deg,#050E1C 0%,#0A1929 40%,#0D47A1 100%);
+  padding:0 18px;
+  padding-top:max(env(safe-area-inset-top, 0px), 12px);
+  padding-bottom:2px; flex-shrink:0;
+  display:flex; flex-direction:column;
+  position:relative; z-index:100;
+  box-shadow:0 4px 24px rgba(5,14,28,0.5);
+}
+#app-header::after {
+  content:''; position:absolute; bottom:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg,transparent 0%,var(--gold) 50%,transparent 100%);
+}
+.app-header-row { display:flex; align-items:center; justify-content:space-between; height:56px; }
+.app-header-title {
+  font-size:17px; font-weight:900; color:#fff;
+  flex:1; text-align:center;
+  display:flex; align-items:center; justify-content:center; gap:7px;
+  text-shadow:0 1px 6px rgba(0,0,0,0.3);
+  letter-spacing:0.4px;
+}
+.header-icon-btn {
+  width:40px; height:40px; border-radius:12px; border:none;
+  background:rgba(255,255,255,0.08); color:#fff;
+  font-size:20px; display:flex; align-items:center; justify-content:center;
+  cursor:pointer; padding:0; margin:0; min-width:40px;
+  box-shadow:none; backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,0.12);
+  transition:background 0.15s;
+}
+.header-icon-btn:active { background:rgba(255,255,255,0.2); transform:none; box-shadow:none; }
+
+/* ── SCREENS ── */
+#screen-wrap { flex:1; overflow:hidden; position:relative; min-height:0; }
+.container {
+  position:absolute; top:0; left:0; right:0; bottom:0;
+  overflow-y:auto; overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+  padding:16px 14px calc(96px + env(safe-area-inset-bottom, 0px));
+  display:flex; flex-direction:column; align-items:center;
+  background:var(--bg);
+  animation:screenIn 0.28s cubic-bezier(0.22,1,0.36,1);
+  overscroll-behavior:contain;
+}
+.container.hidden { display:none!important; }
+.container > * { width:100%; max-width:100%; }
+@keyframes screenIn {
+  from { opacity:0; transform:translateY(22px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* ── BOTTOM NAV ── */
+#bottom-nav {
+  flex-shrink:0;
+  background:linear-gradient(135deg,#050E1C,#0A1929);
+  display:flex; align-items:stretch;
+  padding-bottom:max(env(safe-area-inset-bottom, 0px), 8px);
+  box-shadow:0 -4px 24px rgba(5,14,28,0.6);
+  border-top:1px solid rgba(255,179,0,0.2);
+  z-index:100; position:relative;
+}
+.nav-item {
+  flex:1; display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  padding:10px 4px; cursor:pointer;
+  color:rgba(255,255,255,0.4);
+  transition:all 0.2s;
+  border:none; background:transparent; box-shadow:none;
+  margin:0; width:auto; font-family:'Nunito',sans-serif;
+}
+.nav-item:active { transform:scale(0.88); box-shadow:none; }
+.nav-item.active { color:var(--gold); }
+.nav-item .nav-icon { font-size:23px; line-height:1; margin-bottom:2px; }
+.nav-item .nav-label { font-size:10px; font-weight:800; letter-spacing:0.3px; }
+.nav-item.active .nav-label { color:var(--gold); }
+.nav-dot { width:5px; height:5px; border-radius:50%; background:var(--gold); margin:0 auto 3px; opacity:0; transition:opacity 0.2s; }
+.nav-item.active .nav-dot { opacity:1; }
+
+/* ── TYPOGRAPHY ── */
+h1 { color:var(--text); font-weight:900; margin:8px 0 4px; font-size:clamp(20px,5vw,24px); text-align:center; }
+h2 { color:var(--text); font-weight:800; margin:6px 0 4px; font-size:clamp(15px,4vw,19px); }
+h3 { font-size:clamp(14px,3.5vw,18px); margin:4px 0; color:var(--text); font-weight:800; }
+p  { margin:4px 0; }
+
+/* ── CARD ── */
+.app-card {
+  background:#fff; border-radius:20px; padding:16px; margin-bottom:12px;
+  box-shadow:0 4px 20px rgba(13,71,161,0.08), 0 1px 0 var(--bdr);
+}
+
+/* ── INPUTS ── */
+input, select, textarea {
+  width:100%; padding:14px 16px; margin:7px 0;
+  border:1.5px solid var(--bdr); background:#fff;
+  border-radius:16px; font-size:16px; font-weight:600;
+  outline:none; font-family:'Nunito',sans-serif;
+  color:var(--text);
+  box-shadow:0 2px 8px rgba(13,71,161,0.06);
+  transition:border-color 0.2s, box-shadow 0.2s;
+}
+input:focus, select:focus, textarea:focus {
+  border-color:var(--p4);
+  box-shadow:0 0 0 3px rgba(25,118,210,0.14);
+}
+
+/* ── BUTTONS ── */
+button {
+  background:linear-gradient(135deg,var(--p2),var(--p4));
+  color:#fff; border:none;
+  padding:15px 16px; border-radius:16px; cursor:pointer;
+  font-size:15px; font-weight:800; width:100%; margin-top:8px;
+  box-shadow:0 5px 0 #051e6e, 0 8px 24px rgba(13,71,161,0.35);
+  font-family:'Nunito',sans-serif;
+  letter-spacing:0.3px;
+  transition:transform 0.1s, box-shadow 0.1s;
+}
+button:active { transform:translateY(5px); box-shadow:0 0 0 #051e6e,0 2px 8px rgba(13,71,161,0.2); }
+
+/* GOLD CTA button */
+.btn-gold {
+  background:linear-gradient(135deg,#FF8F00,#FFB300)!important;
+  color:#0A1929!important;
+  box-shadow:0 5px 0 #c66900,0 8px 24px rgba(255,179,0,0.4)!important;
+}
+.btn-gold:active { box-shadow:0 0 0 #c66900!important; }
+
+.btn-green { background:linear-gradient(135deg,#15803d,#22c55e)!important; color:#fff!important; box-shadow:0 4px 0 #14532d,0 6px 16px rgba(21,128,61,0.3)!important; }
+.btn-red   { background:linear-gradient(135deg,#b91c1c,#ef4444)!important; color:#fff!important; box-shadow:0 4px 0 #7f1d1d,0 6px 16px rgba(239,68,68,0.3)!important; }
+.btn-ghost { background:#fff!important; color:var(--p3)!important; border:1.5px solid var(--bdr)!important; box-shadow:0 2px 8px rgba(13,71,161,0.06)!important; }
+
+.danger-btn { background:linear-gradient(135deg,#b91c1c,#ef4444)!important; box-shadow:0 3px 0 #7f1d1d!important; width:auto!important; padding:8px 14px!important; margin:6px 0 0!important; border-radius:12px; font-size:13px; }
+.cert-btn   { background:linear-gradient(135deg,var(--p2),var(--p4))!important; box-shadow:0 4px 0 #051e6e,0 6px 20px rgba(13,71,161,0.3)!important; }
+.review-btn { background:linear-gradient(135deg,#15803d,#22c55e)!important; box-shadow:0 4px 0 #14532d!important; }
+.home-link  { background:#fff; color:var(--p3); border:1.5px solid var(--bdr); box-shadow:0 2px 8px rgba(13,71,161,0.07); font-size:13px; padding:11px; width:100%; margin-top:8px; border-radius:14px; }
+.home-link:active { transform:translateY(2px); box-shadow:none; }
+
+/* ── OPTION BUTTONS ── */
+.option-btn {
+  background:#fff; color:var(--text);
+  border:1.5px solid var(--bdr);
+  padding:14px 16px; border-radius:16px; cursor:pointer;
+  font-size:15px; font-weight:700; margin:5px 0; width:100%;
+  text-align:left;
+  box-shadow:0 2px 10px rgba(13,71,161,0.06);
+  font-family:'Nunito',sans-serif;
+  transition:all 0.12s;
+}
+.option-btn:active { transform:scale(0.98); box-shadow:none; }
+.correct { background:linear-gradient(135deg,#15803d,#22c55e)!important; color:#fff!important; border-color:#15803d!important; box-shadow:0 3px 0 #14532d,0 6px 16px rgba(21,128,61,0.35)!important; }
+.wrong   { background:linear-gradient(135deg,#b91c1c,#ef4444)!important; color:#fff!important; border-color:#b91c1c!important; box-shadow:0 3px 0 #7f1d1d,0 6px 16px rgba(239,68,68,0.35)!important; }
+.hidden  { display:none!important; }
+
+/* ── PROGRESS BAR ── */
+.progress-container {
+  width:100%; background:#E8F0FE; border-radius:20px;
+  height:7px; margin-bottom:12px; overflow:hidden;
+}
+.progress-bar {
+  height:100%;
+  background:linear-gradient(90deg,var(--p2),var(--p5),var(--gold));
+  width:0%; transition:width 0.5s cubic-bezier(0.4,0,0.2,1);
+  border-radius:20px;
+}
+
+/* ── TIMER ── */
+.timer-badge {
+  display:inline-flex; align-items:center; gap:6px;
+  background:#fff; color:#dc2626;
+  font-size:16px; font-weight:900;
+  padding:7px 18px; border-radius:25px;
+  border:1.5px solid #fca5a5;
+  box-shadow:0 3px 0 #fca5a5,0 4px 12px rgba(239,68,68,0.15);
+  margin-bottom:12px;
+}
+
+/* ── SECTION LABEL ── */
+.section-label {
+  font-size:11px; font-weight:900; color:var(--p3);
+  text-transform:uppercase; letter-spacing:1.5px;
+  margin:14px 0 7px; text-align:left;
+  display:flex; align-items:center; gap:8px;
+}
+.section-label::after { content:''; flex:1; height:1px; background:linear-gradient(90deg,var(--bdr),transparent); }
+
+/* ── MODE CARDS ── */
+.mode-cards { display:flex; gap:10px; margin:8px 0 12px; }
+.mode-card {
+  flex:1; background:#fff; border:1.5px solid var(--bdr);
+  border-radius:18px; padding:14px 8px; cursor:pointer; text-align:center;
+  box-shadow:0 2px 12px rgba(13,71,161,0.07);
+  transition:all 0.18s;
+}
+.mode-card:active { transform:scale(0.94); }
+.mode-card.selected {
+  border-color:var(--p4); background:linear-gradient(135deg,#EBF3FF,#fff);
+  box-shadow:0 5px 0 var(--p2),0 8px 24px rgba(13,71,161,0.2);
+}
+.mc-icon { font-size:1.8rem; display:block; margin-bottom:5px; }
+.mc-label { font-size:13px; font-weight:900; color:var(--text); }
+.mc-sub { font-size:10px; font-weight:700; color:var(--sub); margin-top:2px; }
+
+/* ── EXAM CARDS ── */
+.exam-mode-cards { display:flex; gap:10px; margin:8px 0 12px; }
+.exam-card {
+  flex:1; background:#fff; border:1.5px solid var(--bdr);
+  border-radius:18px; padding:16px 10px; cursor:pointer; text-align:center;
+  box-shadow:0 2px 12px rgba(13,71,161,0.07);
+  transition:all 0.18s;
+}
+.exam-card:active { transform:scale(0.94); }
+.exam-card.selected {
+  border-color:var(--p4); background:linear-gradient(135deg,#EBF3FF,#fff);
+  box-shadow:0 5px 0 var(--p2),0 8px 24px rgba(13,71,161,0.2);
+}
+.exam-card.exam-sel {
+  border-color:var(--gold); background:linear-gradient(135deg,#FFFDE7,#fff);
+  box-shadow:0 5px 0 #c66900,0 8px 24px rgba(255,179,0,0.2);
+}
+
+/* ── PILL BUTTONS ── */
+.pill-group { display:flex; flex-wrap:wrap; gap:7px; margin:6px 0 12px; }
+.pill-btn {
+  background:#fff; color:var(--p3);
+  border:1.5px solid var(--bdr);
+  padding:8px 15px; border-radius:50px; cursor:pointer;
+  font-size:13px; font-weight:800;
+  box-shadow:0 2px 6px rgba(13,71,161,0.08);
+  width:auto; margin:0; font-family:'Nunito',sans-serif;
+  transition:all 0.15s;
+}
+.pill-btn:active { transform:translateY(2px); box-shadow:none; }
+.pill-btn.selected { background:linear-gradient(135deg,var(--p2),var(--p4)); color:#fff; border-color:var(--p2); box-shadow:0 3px 0 #051e6e,0 5px 16px rgba(13,71,161,0.3); }
+.pill-btn.diff-easy.selected { background:linear-gradient(135deg,#15803d,#22c55e); border-color:#15803d; box-shadow:0 3px 0 #14532d; }
+.pill-btn.diff-med.selected  { background:linear-gradient(135deg,#d97706,#FFB300); color:#0A1929; border-color:#b45309; box-shadow:0 3px 0 #b45309; }
+.pill-btn.diff-hard.selected { background:linear-gradient(135deg,#b91c1c,#ef4444); border-color:#b91c1c; box-shadow:0 3px 0 #7f1d1d; }
+
+/* ── QUESTION BOX ── */
+#question-text {
+  font-size:clamp(16px,4vw,20px); color:var(--text);
+  font-weight:800; text-align:left!important; line-height:1.7;
+  margin:10px 0 12px;
+  background:#fff; padding:16px 16px 14px;
+  border-radius:16px;
+  box-shadow:0 4px 20px rgba(13,71,161,0.09);
+  border-left:5px solid var(--p4);
+  word-break:break-word;
+  width:100%;
+}
+#desc-question-text {
+  font-size:clamp(15px,4vw,18px); color:var(--text);
+  font-weight:800; text-align:left!important; line-height:1.7;
+  margin:10px 0 12px;
+  background:#fff; padding:16px 16px 14px;
+  border-radius:16px;
+  box-shadow:0 4px 20px rgba(13,71,161,0.09);
+  border-left:5px solid var(--gold);
+  word-break:break-word;
+  width:100%;
+}
+
+/* ── QUIZ BACK BTN ── */
+.quiz-back-btn {
+  position:absolute; top:14px; left:14px;
+  width:40px; height:40px; padding:0; border-radius:12px;
+  font-size:20px; background:#fff; color:var(--p3);
+  border:1.5px solid var(--bdr);
+  box-shadow:0 3px 10px rgba(13,71,161,0.12); z-index:10; margin:0;
+}
+.quiz-back-btn:active { transform:scale(0.9); }
+#quiz-mode-label {
+  font-size:11px; font-weight:900; color:#fff;
+  background:linear-gradient(135deg,var(--p2),var(--p4));
+  padding:5px 14px; border-radius:20px;
+  text-align:center; margin-bottom:10px;
+  display:inline-block; width:auto; align-self:center;
+  box-shadow:0 3px 10px rgba(13,71,161,0.3);
+  letter-spacing:0.5px;
+}
+
+/* ── STAT CHIPS ── */
+.stat-chip {
+  background:#fff; border:1.5px solid var(--bdr);
+  border-radius:18px; padding:12px 16px; text-align:center;
+  box-shadow:0 3px 12px rgba(13,71,161,0.08);
+}
+.stat-chip .sv { font-size:24px; font-weight:900; line-height:1; }
+.stat-chip .sl { font-size:10px; font-weight:800; color:var(--sub); margin-top:3px; }
+
+/* ── PRACTICE HINT ── */
+.practice-hint {
+  background:linear-gradient(135deg,#FFFDE7,#fff);
+  border:1.5px solid #FFD54F; border-radius:14px;
+  padding:12px 16px; margin:10px 0;
+  font-weight:700; font-size:13px; color:#5c3c00;
+  text-align:left; display:none;
+  box-shadow:0 3px 12px rgba(255,179,0,0.15);
+}
+
+/* ── HOME LOGO ── */
+.logo-wrap { display:flex; justify-content:center; margin:6px 0; }
+.home-logo { max-width:clamp(100px,30vw,150px); height:auto; filter:drop-shadow(0 8px 28px rgba(13,71,161,0.3)); }
+.home-title {
+  font-size:clamp(1.3rem,5vw,1.7rem); font-weight:900;
+  background:linear-gradient(135deg,var(--p2),var(--p4),var(--p5));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  margin:4px 0 2px; text-align:center;
+}
+.home-sub { color:var(--sub); font-size:12px; font-weight:700; margin-bottom:10px; text-align:center; }
+
+/* ── CONFETTI ── */
+#confetti-overlay { position:fixed; inset:0; pointer-events:none; z-index:9999; display:none; }
+.conf-piece { position:absolute; border-radius:3px; animation:confFall linear forwards; }
+@keyframes confFall { 0%{top:-20px;opacity:1;transform:rotate(0deg);} 100%{top:105vh;opacity:0;transform:rotate(720deg) translateX(60px);} }
+
+/* ── ANIMATIONS ── */
+.result-anim { animation:resultPop 0.6s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+@keyframes resultPop { 0%{transform:scale(0.3) rotate(-8deg);opacity:0;} 100%{transform:scale(1) rotate(0deg);opacity:1;} }
+.score-shine { animation:scorePulse 1.2s ease 0.7s 3; }
+@keyframes scorePulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.1);filter:brightness(1.25);} }
+@keyframes slideUp { from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:translateY(0);} }
+
+/* ── MODAL ── */
+.modal-overlay {
+  position:fixed; inset:0; z-index:99998;
+  background:rgba(5,14,28,0.7);
+  backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+  z-index:9000; display:flex; align-items:center; justify-content:center;
+  padding:20px; opacity:0; transition:opacity 0.2s ease; pointer-events:none;
+}
+.modal-overlay.show { opacity:1; pointer-events:all; }
+.modal-box {
+  background:#fff; border-radius:28px; padding:30px 24px 24px;
+  width:100%; max-width:340px; text-align:center;
+  box-shadow:0 30px 80px rgba(5,14,28,0.4);
+  transform:scale(0.85) translateY(20px);
+  transition:transform 0.28s cubic-bezier(0.34,1.56,0.64,1),opacity 0.2s;
+  opacity:0; border-top:4px solid var(--p4);
+}
+.modal-overlay.show .modal-box { transform:scale(1) translateY(0); opacity:1; }
+.modal-icon { font-size:3.2rem; margin-bottom:8px; display:block; }
+.modal-title { font-size:18px; font-weight:900; color:var(--text); margin:0 0 6px; }
+.modal-msg { font-size:14px; font-weight:700; color:var(--sub); margin:0 0 22px; line-height:1.5; }
+.modal-btns { display:flex; gap:10px; }
+.modal-btn {
+  flex:1; padding:14px 10px; border-radius:14px; border:none;
+  font-size:15px; font-weight:800; cursor:pointer;
+  font-family:'Nunito',sans-serif; width:auto; margin:0;
+  transition:transform 0.1s;
+}
+.modal-btn:active { transform:translateY(3px); }
+.modal-btn-cancel { background:#F4F7FF; color:var(--p3); box-shadow:0 3px 0 var(--bdr); }
+.modal-btn-cancel:active { box-shadow:none; }
+.modal-btn-confirm { background:linear-gradient(135deg,var(--p2),var(--p4)); color:#fff; box-shadow:0 4px 0 #051e6e; }
+.modal-btn-confirm:active { box-shadow:none; }
+.modal-btn-confirm.red { background:linear-gradient(135deg,#b91c1c,#ef4444); box-shadow:0 4px 0 #7f1d1d; }
+.modal-btn-confirm.green { background:linear-gradient(135deg,#15803d,#22c55e); box-shadow:0 4px 0 #14532d; }
+
+/* ── WRONG Q SCREEN ── */
+.wrong-q-card { background:#fff; border-radius:18px; border:1.5px solid #fca5a5; padding:16px; margin-bottom:10px; text-align:left; box-shadow:0 3px 12px rgba(239,68,68,0.1); }
+.wrong-q-card .wq-num { font-size:10px; font-weight:900; color:#ef4444; text-transform:uppercase; letter-spacing:1px; margin-bottom:5px; }
+.wrong-q-card .wq-question { font-size:15px; font-weight:800; color:var(--text); margin:0 0 8px; line-height:1.5; }
+.wrong-q-card .wq-your { font-size:13px; font-weight:700; color:var(--sub); margin:0 0 4px; }
+.wrong-q-card .wq-your span { color:#ef4444; font-weight:800; }
+.wrong-q-card .wq-correct { font-size:13px; font-weight:700; color:var(--sub); margin:0; }
+.wrong-q-card .wq-correct span { color:#16a34a; font-weight:800; }
+.wrong-q-card.missed { border-color:var(--bdr); }
+.wrong-q-card.missed .wq-num { color:var(--p4); }
+
+/* ── ANALYSIS ── */
+.analysis-card { background:#fff; border:1.5px solid var(--bdr); border-radius:18px; padding:16px; margin-bottom:12px; text-align:left; box-shadow:0 3px 14px rgba(13,71,161,0.07); }
+.analysis-card h4 { font-size:11px; font-weight:900; color:var(--p3); text-transform:uppercase; letter-spacing:1.5px; margin:0 0 12px; display:flex; align-items:center; gap:8px; }
+.analysis-card h4::after { content:''; flex:1; height:1px; background:linear-gradient(90deg,var(--bdr),transparent); }
+.score-bar-wrap { margin:7px 0; }
+.score-bar-label { display:flex; justify-content:space-between; font-size:13px; font-weight:700; color:var(--sub); margin-bottom:5px; }
+.score-bar-bg { background:#E8F0FE; border-radius:10px; height:10px; overflow:hidden; }
+.score-bar-fill { height:100%; border-radius:10px; transition:width 0.9s cubic-bezier(0.4,0,0.2,1); }
+.donut-wrap { display:flex; align-items:center; gap:16px; }
+.donut-svg { flex-shrink:0; }
+.legend-item { display:flex; align-items:center; gap:8px; margin-bottom:7px; font-size:13px; font-weight:700; color:var(--sub); }
+.legend-dot { width:12px; height:12px; border-radius:50%; flex-shrink:0; }
+.analysis-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px; }
+.mini-stat { background:#F4F7FF; border:1.5px solid var(--bdr); border-radius:16px; padding:14px 8px; text-align:center; box-shadow:0 2px 8px rgba(13,71,161,0.06); }
+.mini-stat .ms-val { font-size:1.8rem; font-weight:900; }
+.mini-stat .ms-label { font-size:11px; font-weight:800; color:var(--sub); margin-top:3px; }
+.history-row { display:flex; align-items:center; gap:10px; padding:9px 0; border-bottom:1px solid #F4F7FF; }
+.history-row:last-child { border-bottom:none; }
+.history-row .hr-date { font-size:11px; color:var(--sub); font-weight:700; min-width:65px; }
+.history-row .hr-subj { flex:1; font-size:13px; font-weight:800; color:var(--text); }
+.history-row .hr-score { font-size:14px; font-weight:900; }
+
+/* ── CERTIFICATE ── */
+#certificate-screen.container { max-width:900px; padding:20px; }
+#certificate-content { background:#fff; padding:10px; border:6px solid var(--p3); border-radius:18px; width:100%; box-sizing:border-box; margin-top:10px; box-shadow:0 10px 40px rgba(13,71,161,0.18); }
+.cert-inner { border:1.5px solid var(--bdr); padding:28px 20px; border-radius:12px; background:linear-gradient(135deg,#fff 0%,#F4F7FF 100%); display:flex; flex-direction:column; align-items:center; }
+.cert-logo { mix-blend-mode:multiply; max-width:100px; height:auto; margin-bottom:10px; filter:drop-shadow(0 3px 8px rgba(0,0,0,0.15)); }
+.cert-title { font-size:clamp(22px,5vw,32px); color:var(--p2); font-weight:900; margin:0 0 5px; text-align:center; }
+.cert-subtitle { font-size:clamp(12px,3vw,16px); color:var(--sub); font-weight:800; text-transform:uppercase; margin:0; text-align:center; letter-spacing:1px; }
+.cert-text { font-size:clamp(14px,3vw,18px); color:var(--p3); font-weight:700; line-height:1.5; margin:15px 0; text-align:center; }
+#cert-name { font-size:clamp(22px,6vw,36px); color:#b91c1c; font-weight:900; border-bottom:3px dashed var(--bdr); display:inline-block; padding-bottom:5px; margin:15px 0; width:90%; max-width:600px; word-wrap:break-word; text-align:center; }
+#cert-subject { color:var(--p2); font-size:clamp(18px,4vw,24px); font-weight:900; }
+.cert-score-box { background:linear-gradient(135deg,#F4F7FF,#fff); border:2px dashed var(--p4); border-radius:16px; padding:15px; margin:15px auto; width:80%; max-width:300px; text-align:center; box-shadow:0 4px 16px rgba(13,71,161,0.1); }
+.cert-score-box h3 { color:var(--p2); font-size:clamp(18px,4vw,22px); font-weight:900; margin:0; }
+.cert-footer { display:flex; justify-content:space-between; align-items:flex-end; margin-top:28px; padding:0 10px; gap:10px; width:100%; box-sizing:border-box; }
+.cert-footer-col { text-align:center; flex:1; }
+.cert-footer-col p { font-size:clamp(11px,2.5vw,15px); margin:0; font-weight:800; }
+.cert-seal { width:50px; height:50px; background:linear-gradient(135deg,var(--gold2),var(--gold)); border-radius:50%; border:3px double #c66900; display:flex; align-items:center; justify-content:center; font-size:22px; margin:0 auto; box-shadow:0 4px 16px rgba(255,179,0,0.4); }
+
+/* ── PRINT ── */
+@media print {
+  @page { size: A4 landscape; margin: 8mm; }
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; box-sizing: border-box !important; }
+  html, body { background: #fff !important; margin: 0 !important; padding: 0 !important; width: 100% !important; height: auto !important; overflow: visible !important; }
+  body * { visibility: hidden; }
+
+  /* Show only certificate */
+  #certificate-screen {
+    visibility: visible !important;
+    position: fixed !important;
+    top: 0 !important; left: 0 !important;
+    width: 100vw !important; height: 100vh !important;
+    padding: 0 !important; margin: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: #fff !important;
+    overflow: hidden !important;
+  }
+  #certificate-screen * { visibility: visible !important; }
+
+  #certificate-content {
+    width: 95% !important; max-width: 95% !important;
+    height: auto !important; max-height: 95vh !important;
+    margin: 0 auto !important;
+    border: 6px solid #1565C0 !important;
+    border-radius: 16px !important;
+    padding: 8px !important;
+    page-break-inside: avoid !important;
+    box-shadow: none !important;
+  }
+  .cert-inner {
+    width: 100% !important; height: auto !important;
+    padding: 20px 24px !important;
+    background: linear-gradient(135deg,#ffffff,#F0F5FF) !important;
+    border: 2px solid #C5D8F5 !important;
+    border-radius: 10px !important;
+    display: flex !important; flex-direction: column !important;
+    align-items: center !important;
+  }
+  .cert-logo { max-width: 80px !important; margin-bottom: 8px !important; }
+  .cert-title { font-size: 26pt !important; margin: 0 0 4px !important; color: #0D47A1 !important; }
+  .cert-subtitle { font-size: 11pt !important; margin: 0 0 10px !important; }
+  .cert-text { font-size: 12pt !important; margin: 8px 0 !important; }
+  #cert-name { font-size: 22pt !important; margin: 6px 0 !important; }
+  #cert-class-display { font-size: 12pt !important; margin: 0 !important; }
+  #cert-subject { font-size: 15pt !important; }
+  .cert-score-box { padding: 10px !important; margin: 8px auto !important; width: 60% !important; }
+  .cert-score-box h3 { font-size: 15pt !important; }
+  .cert-footer { margin-top: 16px !important; padding: 0 12px !important; }
+  .cert-footer-col p { font-size: 11pt !important; }
+  .cert-seal { width: 42px !important; height: 42px !important; font-size: 18px !important; }
+  .no-print, #sound-toggle, #app-header, #bottom-nav, #splash-screen { display: none !important; }
+}
+
+/* ── ADMIN ── */
+.admin-tabs { display:flex; justify-content:space-between; margin-bottom:20px; background:#F4F7FF; padding:5px; border-radius:20px; border:1.5px solid var(--bdr); flex-wrap:wrap; }
+.admin-tab-btn { background:transparent; color:var(--sub); box-shadow:none; border:none; padding:8px 5px; font-size:13px; width:48%; margin-bottom:5px; border-radius:15px; font-weight:700; }
+.admin-tab-btn.active { color:var(--p4); background:#fff; box-shadow:0 3px 10px rgba(13,71,161,0.1); }
+.table-responsive { width:100%; overflow-x:auto; border-radius:15px; border:1.5px solid var(--bdr); margin-top:15px; }
+table { width:100%; border-collapse:separate; border-spacing:0; min-width:350px; background:#fff; }
+th,td { padding:10px; text-align:center; font-size:14px; border-bottom:1px solid #F4F7FF; font-weight:600; }
+th { background:linear-gradient(135deg,var(--p2),var(--p4)); color:#fff; border-bottom:none; }
+</style>
+</head>
+<body>
+
+<!-- ── SPLASH SCREEN ── -->
+<div id="splash-screen">
+    <img class="splash-logo" src="20260315_085358.png" onerror="this.style.display='none'">
+    <div class="splash-title">உங்கள் ஆசிரியர்</div>
+    <div class="splash-sub">அறிவின் ஒளி, வளர்ச்சியின் பாதை</div>
+    <div class="splash-loader"></div>
+</div>
+
+<!-- ── APP SHELL ── -->
+<div id="app-shell">
+
+    <!-- TOP HEADER -->
+    <div id="app-header">
+        <div class="app-header-row">
+            <button class="header-icon-btn header-back-btn" id="header-back-btn" onclick="headerBack()" style="opacity:0;pointer-events:none;">‹</button>
+            <div class="app-header-title" id="header-title" style="display:flex;align-items:center;justify-content:center;gap:7px;color:#fff;">
+                <span style="color:#FFB300;font-size:16px;">★</span>
+                <span>உங்கள் ஆசிரியர்</span>
+                <span style="color:#FFB300;font-size:16px;">★</span>
+            </div>
+            <div style="width:36px;"></div>
+        </div>
+    </div>
+
+    <!-- SCREEN CONTENT -->
+    <div id="screen-wrap">
+
+<!-- ── CUSTOM MODAL (replaces all confirm/alert popups) ── -->
+<div class="modal-overlay" id="custom-modal" onclick="modalOverlayClick(event)">
+    <div class="modal-box" id="custom-modal-box">
+        <span class="modal-icon" id="modal-icon">⚠️</span>
+        <p class="modal-title" id="modal-title">உறுதிப்படுத்தவும்</p>
+        <p class="modal-msg" id="modal-msg"></p>
+        <div class="modal-btns" id="modal-btns">
+            <button class="modal-btn modal-btn-cancel" id="modal-cancel-btn" onclick="closeModal()">ரத்து</button>
+            <button class="modal-btn modal-btn-confirm" id="modal-confirm-btn" onclick="modalConfirmAction()">உறுதி</button>
+        </div>
+    </div>
+</div>
+
+<!-- Keep old delete-modal as hidden placeholder for app.js compatibility -->
+<div id="delete-modal" class="hidden">
+    <button id="confirm-delete-btn" onclick="executeDelete()"></button>
+</div>
+
+<div class="container hidden" id="role-screen"></div>
+
+<div class="container hidden" id="admin-login-screen">
+    <img src="20260315_085358.png" alt="Logo" style="max-width: 100px; height: auto; margin-bottom: 10px;" onerror="this.outerHTML='<div style=\'font-size: 4rem; margin-bottom: 10px;\'>🧑‍🏫</div>'">
+    <h2>ஆசிரியர் நுழைவு</h2>
+    <input type="text" id="teacher-username" placeholder="பயனர்பெயர் " style="text-align: center;">
+    <input type="password" id="admin-password" placeholder="கடவுச்சொல் " style="text-align: center;">
+    <button style="background-color: #1976D2; box-shadow: 0 6px 0 #1976D2;" onclick="verifyTeacherLogin()">உள்ளே நுழைய</button>
+    <p id="pwd-error" style="color: #ef4444; font-weight: 800; margin-top: 15px;" class="hidden">தவறான பயனர்பெயர் அல்லது கடவுச்சொல்! ❌</p>
+    <button class="home-link" onclick="goHome()">🏠 முகப்பு</button>
+</div>
+
+<div class="container hidden" id="admin-screen">
+    <h2 style="color: #1976D2; margin-bottom: 20px;" id="admin-welcome-text">⚙️ ஆசிரியர் பக்கம்</h2>
+    <div class="admin-tabs">
+        <button class="admin-tab-btn active" id="tab-mcq" onclick="switchAdminTab('mcq')">➕ 1 மார்க் சேர்</button>
+        <button class="admin-tab-btn" id="tab-desc" onclick="switchAdminTab('desc')">➕ 2/5 மார்க் சேர்</button>
+        <button class="admin-tab-btn" id="tab-manage" onclick="switchAdminTab('manage')">🗑️ நிர்வகி</button>
+        <button class="admin-tab-btn" id="tab-scores" onclick="switchAdminTab('scores')">🏆 ரேங்க்</button>
+    </div>
+
+    <div id="admin-mcq-section">
+        <div style="display:flex; gap:10px;">
+            <select id="bulk-class" style="flex:1;"></select>
+            <select id="bulk-subject" style="flex:1;"></select>
+        </div>
+        <textarea id="simple-text" placeholder="உதாரணம்:&#10;கேள்வி&#10;விருப்பம் 1&#10;விருப்பம் 2&#10;விருப்பம் 3&#10;விருப்பம் 4&#10;சரியான விடை (விடை விருப்பங்களில் உள்ளபடி அப்படியே இருக்க வேண்டும்)"></textarea>
+        <button style="background-color: #1976D2; box-shadow: 0 6px 0 #1565C0;" onclick="uploadSimpleText()">அப்லோட் செய் 🚀</button>
+        <p id="paste-status" style="font-weight: 800; margin-top: 15px;"></p>
+    </div>
+
+    <div id="admin-desc-section" class="hidden">
+        <div style="display:flex; gap:10px;">
+            <select id="desc-class" style="flex:1;"></select>
+            <select id="desc-subject" style="flex:1;"></select>
+        </div>
+        <textarea id="desc-q-input" placeholder="📝 கேள்வியை டைப் செய்யவும்..."></textarea>
+        <textarea id="desc-ans-input" placeholder="✅ விடையை டைப் செய்யவும்..."></textarea>
+        <button style="background-color: #1976D2;" onclick="uploadDescQuestion()">அப்லோட் செய்</button>
+        <p id="desc-status" style="font-weight: bold; margin-top: 10px;"></p>
+    </div>
+
+    <div id="admin-manage-section" class="hidden">
+        <div style="display:flex; gap:10px;">
+            <select id="manage-class" style="flex:1;" onchange="loadManageQuestions()"></select>
+            <select id="manage-subject" style="flex:1;" onchange="loadManageQuestions()"></select>
+        </div>
+        <div style="margin: 15px 0;">
+            <label><input type="radio" name="manage-type" value="mcq" checked onchange="loadManageQuestions()"> 1 மார்க்</label>
+            <label><input type="radio" name="manage-type" value="desc" onchange="loadManageQuestions()"> 2/5 மார்க்</label>
+        </div>
+        
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 15px;">
+            <div id="manage-q-count" style="font-weight: 800; color: #1565C0;"></div>
+            <button id="delete-all-btn" class="danger-btn hidden" onclick="confirmDeleteAll()" style="margin:0 !important; background-color: #b91c1c !important; box-shadow: 0 5px 0 #7f1d1d !important;">🗑️ அனைத்தும் நீக்கு</button>
+        </div>
+        
+        <div id="manage-list" style="text-align: left;"></div>
+    </div>
+
+    <div id="admin-scores-section" class="hidden">
+        <select id="score-filter" onchange="loadLeaderboard()"></select>
+        <div class="table-responsive">
+            <table id="scores-table">
+                <tr><th>பெயர்</th><th>வகுப்பு</th><th>பாடம்</th><th>மதிப்பெண்</th><th>நீக்க</th></tr>
+                <tbody id="scores-body"></tbody>
+            </table>
+        </div>
+    </div>
+    <div style="display: flex; justify-content: space-between; gap: 10px; margin-top: 20px;">
+        <button class="home-link" onclick="goHome()" style="width: 50%;">🏠 முகப்பு</button>
+        <button class="danger-btn" onclick="adminLogout()" style="width: 50%; padding: 10px !important;">🚪 Log Out</button>
+    </div>
+</div>
+
+<div class="container" id="student-login-screen">
+    <!-- Hero Banner -->
+    <div style="background:linear-gradient(160deg,#1976D2 0%,#1976D2 50%,#E3F2FD 100%);border-radius:20px;padding:28px 20px 22px;margin-bottom:20px;text-align:center;box-shadow:0 6px 24px rgba(255,167,38,0.35);border:2px solid rgba(255,255,255,0.6);">
+        <img src="20260315_085358.png" alt="Logo" style="width:90px;height:90px;object-fit:contain;border-radius:18px;box-shadow:0 4px 16px rgba(0,0,0,0.2);margin-bottom:12px;background:#fff;" onerror="this.outerHTML='<div style=&quot;font-size:3.5rem;margin-bottom:12px;&quot;>🎓</div>'">
+        <div style="color:#fff;font-size:22px;font-weight:900;letter-spacing:0.5px;">உங்கள் ஆசிரியர்</div>
+        <div style="color:rgba(30,58,138,0.75);font-size:12px;font-weight:700;margin-top:4px;">அறிவின் ஒளி · வளர்ச்சியின் பாதை</div>
+        <div style="display:flex;justify-content:center;gap:16px;margin-top:14px;background:rgba(30,58,138,0.08);border-radius:14px;padding:10px 8px;">
+            <div style="text-align:center;"><div style="font-size:18px;">📚</div><div style="color:rgba(30,58,138,0.75);font-size:10px;font-weight:700;margin-top:2px;">பாடங்கள்</div></div>
+            <div style="text-align:center;"><div style="font-size:18px;">🎯</div><div style="color:rgba(30,58,138,0.75);font-size:10px;font-weight:700;margin-top:2px;">தேர்வு</div></div>
+            <div style="text-align:center;"><div style="font-size:18px;">📊</div><div style="color:rgba(30,58,138,0.75);font-size:10px;font-weight:700;margin-top:2px;">Analysis</div></div>
+            <div style="text-align:center;"><div style="font-size:18px;">🏆</div><div style="color:rgba(30,58,138,0.75);font-size:10px;font-weight:700;margin-top:2px;">சான்றிதழ்</div></div>
+        </div>
+    </div>
+    <!-- Login Card -->
+    <div style="background:#fff;border-radius:20px;padding:20px;box-shadow:0 2px 12px rgba(255,183,77,0.15);border:1.5px solid #BBDEFB;">
+        <p style="font-size:13px;font-weight:800;color:#5C8EC7;text-transform:uppercase;letter-spacing:1px;margin:0 0 12px;text-align:left;">👤 உங்கள் விவரங்கள்</p>
+        <input type="text" id="student-name" placeholder="பெயர் உள்ளிடவும்" style="text-align:left;border-color:#BBDEFB;">
+        <select id="student-class" style="font-weight:800;color:#1976D2;border-color:#BBDEFB;">
+            <option value="">📚 வகுப்பைத் தேர்ந்தெடுக்கவும்</option>
+            <option value="1">1 ஆம் வகுப்பு</option>
+            <option value="2">2 ஆம் வகுப்பு</option>
+            <option value="3">3 ஆம் வகுப்பு</option>
+            <option value="4">4 ஆம் வகுப்பு</option>
+            <option value="5">5 ஆம் வகுப்பு</option>
+            <option value="6">6 ஆம் வகுப்பு</option>
+            <option value="7">7 ஆம் வகுப்பு</option>
+            <option value="8">8 ஆம் வகுப்பு</option>
+            <option value="9">9 ஆம் வகுப்பு</option>
+            <option value="10">10 ஆம் வகுப்பு</option>
+            <option value="11">11 ஆம் வகுப்பு</option>
+            <option value="12">12 ஆம் வகுப்பு</option>
+        </select>
+        <button onclick="verifyStudentLogin()" style="background:linear-gradient(135deg,#1976D2,#1976D2);box-shadow:0 4px 0 #1976D2;margin-top:14px;font-size:16px;padding:16px;">
+            தொடங்கு 🚀
+        </button>
+        <p id="student-error" style="color:#ef4444;font-weight:800;margin-top:10px;font-size:13px;text-align:center;" class="hidden"></p>
+    </div>
+</div>
+
+<div class="container hidden" id="subject-screen">
+
+    <!-- ── WELCOME BANNER ── -->
+    <div style="background:linear-gradient(135deg,#0D47A1 0%,#1565C0 60%,#1976D2 100%);border-radius:20px;padding:18px 16px 16px;margin-bottom:14px;margin-top:4px;position:relative;overflow:visible;box-shadow:0 6px 24px rgba(13,71,161,0.3);">
+        <!-- Decorative circles — clipped within border-radius naturally -->
+        <div style="position:absolute;top:-8px;right:-8px;width:70px;height:70px;background:rgba(255,193,7,0.18);border-radius:50%;pointer-events:none;"></div>
+        <div style="position:absolute;bottom:-16px;right:24px;width:44px;height:44px;background:rgba(255,255,255,0.07);border-radius:50%;pointer-events:none;"></div>
+
+        <!-- Name + Logo row -->
+        <div style="display:flex;align-items:center;gap:12px;position:relative;z-index:1;">
+            <img src="20260315_085358.png" style="width:48px;height:48px;border-radius:14px;background:#fff;object-fit:contain;flex-shrink:0;box-shadow:0 3px 10px rgba(0,0,0,0.25);" onerror="this.outerHTML='<div style=&quot;width:48px;height:48px;background:rgba(255,255,255,0.2);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;&quot;>🎓</div>'">
+            <div style="flex:1;min-width:0;">
+                <div style="color:rgba(255,255,255,0.75);font-size:11px;font-weight:700;margin-bottom:3px;">👋 வணக்கம்!</div>
+                <div id="welcome-text" style="color:#fff;font-weight:900;font-size:17px;line-height:1.2;"></div>
+            </div>
+            <button onclick="studentLogout()" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.2);box-shadow:none;width:38px;height:38px;border-radius:12px;padding:0;margin:0;font-size:16px;flex-shrink:0;color:#fff;min-width:38px;">🚪</button>
+        </div>
+
+        <!-- Quick stats row -->
+        <div style="display:flex;gap:8px;margin-top:14px;position:relative;z-index:1;">
+            <div style="flex:1;background:rgba(255,255,255,0.13);border-radius:12px;padding:9px 8px;text-align:center;border:1px solid rgba(255,255,255,0.1);">
+                <div style="color:#FFD54F;font-size:17px;font-weight:900;line-height:1;" id="home-total-quizzes">—</div>
+                <div style="color:rgba(255,255,255,0.75);font-size:10px;font-weight:700;margin-top:3px;">தேர்வுகள்</div>
+            </div>
+            <div style="flex:1;background:rgba(255,255,255,0.13);border-radius:12px;padding:9px 8px;text-align:center;border:1px solid rgba(255,255,255,0.1);">
+                <div style="color:#FFD54F;font-size:17px;font-weight:900;line-height:1;" id="home-best-score">—</div>
+                <div style="color:rgba(255,255,255,0.75);font-size:10px;font-weight:700;margin-top:3px;">சிறந்த மதிப்பு</div>
+            </div>
+            <div style="flex:1;background:rgba(255,255,255,0.13);border-radius:12px;padding:9px 8px;text-align:center;border:1px solid rgba(255,255,255,0.1);">
+                <div style="color:#FFD54F;font-size:17px;font-weight:900;line-height:1;" id="home-streak">🔥</div>
+                <div style="color:rgba(255,255,255,0.75);font-size:10px;font-weight:700;margin-top:3px;">தொடர்ச்சி</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SUBJECT SECTION ── -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <p style="font-size:11px;font-weight:800;color:#5C8EC7;text-transform:uppercase;letter-spacing:1px;margin:0;">📚 பாடம் தேர்வு செய்</p>
+        <p id="loading" style="color:#1976D2;font-weight:800;font-size:12px;margin:0;" class="hidden">ஏற்றுகிறது ⏳</p>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
+        <div onclick="setSubjectCard(this,'தமிழ்')" class="subj-card" data-val="தமிழ்" style="background:#fff;border:2px solid #1976D2;border-radius:16px;padding:14px 8px;text-align:center;cursor:pointer;box-shadow:0 4px 12px rgba(30,58,138,0.12);">
+            <div style="font-size:2rem;margin-bottom:4px;">📙</div>
+            <div style="font-size:13px;font-weight:900;color:#1976D2;">தமிழ்</div>
+            <div style="font-size:10px;font-weight:700;color:#90CAF9;margin-top:2px;">Tamil</div>
+        </div>
+        <div onclick="setSubjectCard(this,'ஆங்கிலம்')" class="subj-card" data-val="ஆங்கிலம்" style="background:#fff;border:2px solid #BBDEFB;border-radius:16px;padding:14px 8px;text-align:center;cursor:pointer;box-shadow:0 2px 8px rgba(255,183,77,0.1);">
+            <div style="font-size:2rem;margin-bottom:4px;">📘</div>
+            <div style="font-size:13px;font-weight:900;color:#1976D2;">ஆங்கிலம்</div>
+            <div style="font-size:10px;font-weight:700;color:#90CAF9;margin-top:2px;">English</div>
+        </div>
+        <div onclick="setSubjectCard(this,'கணிதம்')" class="subj-card" data-val="கணிதம்" style="background:#fff;border:2px solid #BBDEFB;border-radius:16px;padding:14px 8px;text-align:center;cursor:pointer;box-shadow:0 2px 8px rgba(255,183,77,0.1);">
+            <div style="font-size:2rem;margin-bottom:4px;">📐</div>
+            <div style="font-size:13px;font-weight:900;color:#1976D2;">கணிதம்</div>
+            <div style="font-size:10px;font-weight:700;color:#90CAF9;margin-top:2px;">Maths</div>
+        </div>
+        <div onclick="setSubjectCard(this,'அறிவியல்')" class="subj-card" data-val="அறிவியல்" style="background:#fff;border:2px solid #BBDEFB;border-radius:16px;padding:14px 8px;text-align:center;cursor:pointer;box-shadow:0 2px 8px rgba(255,183,77,0.1);">
+            <div style="font-size:2rem;margin-bottom:4px;">🔬</div>
+            <div style="font-size:13px;font-weight:900;color:#1976D2;">அறிவியல்</div>
+            <div style="font-size:10px;font-weight:700;color:#90CAF9;margin-top:2px;">Science</div>
+        </div>
+        <div onclick="setSubjectCard(this,'சமூக அறிவியல்')" class="subj-card" data-val="சமூக அறிவியல்" style="background:#fff;border:2px solid #BBDEFB;border-radius:16px;padding:14px 8px;text-align:center;cursor:pointer;box-shadow:0 2px 8px rgba(255,183,77,0.1);grid-column:span 2;">
+            <div style="font-size:2rem;margin-bottom:4px;">🌍</div>
+            <div style="font-size:13px;font-weight:900;color:#1976D2;">சமூக அறிவியல்</div>
+            <div style="font-size:10px;font-weight:700;color:#90CAF9;margin-top:2px;">Social Science</div>
+        </div>
+    </div>
+    <select id="student-subject-select" class="hidden">
+        <option value="தமிழ்">தமிழ்</option>
+        <option value="ஆங்கிலம்">ஆங்கிலம்</option>
+        <option value="கணிதம்">கணிதம்</option>
+        <option value="அறிவியல்">அறிவியல்</option>
+        <option value="சமூக அறிவியல்">சமூக அறிவியல்</option>
+    </select>
+
+    <!-- ── START EXAM BUTTON ── -->
+    <button onclick="goToSettings()" style="background:linear-gradient(135deg,#1976D2,#1565C0);box-shadow:0 5px 0 #1565C0;font-size:16px;font-weight:900;padding:16px;border-radius:18px;margin-bottom:12px;letter-spacing:0.3px;">
+        🚀 தேர்வு தொடங்கு
+    </button>
+
+    <!-- ── QUICK ACCESS ── -->
+    <p style="font-size:11px;font-weight:800;color:#5C8EC7;text-transform:uppercase;letter-spacing:1px;margin:0 0 8px;text-align:left;">⚡ விரைவு அணுகல்</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px;">
+        <div onclick="goToLastResult()" style="background:#fff;border:2px solid #BBDEFB;border-radius:16px;padding:14px 12px;cursor:pointer;display:flex;align-items:center;gap:10px;box-shadow:0 2px 8px rgba(255,183,77,0.1);">
+            <div style="width:38px;height:38px;background:#F3F8FF;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">📊</div>
+            <div>
+                <div style="font-size:13px;font-weight:900;color:#0D2137;">Analysis</div>
+                <div style="font-size:10px;font-weight:700;color:#5C8EC7;margin-top:1px;">செயல்திறன்</div>
+            </div>
+        </div>
+        <div onclick="goToLastCertificate()" style="background:#fff;border:2px solid #BBDEFB;border-radius:16px;padding:14px 12px;cursor:pointer;display:flex;align-items:center;gap:10px;box-shadow:0 2px 8px rgba(255,183,77,0.1);">
+            <div style="width:38px;height:38px;background:#F3F8FF;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">📜</div>
+            <div>
+                <div style="font-size:13px;font-weight:900;color:#0D2137;">சான்றிதழ்</div>
+                <div style="font-size:10px;font-weight:700;color:#5C8EC7;margin-top:1px;">Certificate</div>
+            </div>
+        </div>
+        <div onclick="goToWrongQs()" style="background:#fff;border:2px solid #BBDEFB;border-radius:16px;padding:14px 12px;cursor:pointer;display:flex;align-items:center;gap:10px;box-shadow:0 2px 8px rgba(255,183,77,0.1);">
+            <div style="width:38px;height:38px;background:#fef2f2;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">❌</div>
+            <div>
+                <div style="font-size:13px;font-weight:900;color:#0D2137;">தவறானவை</div>
+                <div style="font-size:10px;font-weight:700;color:#5C8EC7;margin-top:1px;">Wrong Qs</div>
+            </div>
+        </div>
+        <div onclick="goToReview()" style="background:#fff;border:2px solid #BBDEFB;border-radius:16px;padding:14px 12px;cursor:pointer;display:flex;align-items:center;gap:10px;box-shadow:0 2px 8px rgba(255,183,77,0.1);">
+            <div style="width:38px;height:38px;background:#F0F6FF;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">📝</div>
+            <div>
+                <div style="font-size:13px;font-weight:900;color:#0D2137;">விடை சரிபார்</div>
+                <div style="font-size:10px;font-weight:700;color:#5C8EC7;margin-top:1px;">Review</div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ===== SETTINGS SCREEN ===== -->
+<div class="container hidden" id="settings-screen">
+    <p style="font-size:11px;font-weight:800;color:#5C8EC7;text-transform:uppercase;letter-spacing:1px;margin:0 0 14px;text-align:left;">⚙️ தேர்வு அமைப்புகள்</p>
+    <div id="settings-subject-label" style="background:linear-gradient(135deg,#1976D2,#1976D2);color:#fff;font-size:13px;font-weight:800;padding:10px 14px;border-radius:12px;margin-bottom:14px;text-align:center;"></div>
+
+    <!-- Practice / Exam Mode -->
+    <div class="section-label">🎭 கற்றல் முறை</div>
+    <div class="exam-mode-cards">
+        <div class="exam-card selected" id="em-practice" onclick="selectExamMode('practice')">
+            <span class="mc-icon">📖</span>
+            <div class="mc-label">பயிற்சி mode</div>
+            <div class="mc-sub">நேரமில்லை · விடை காணலாம்</div>
+        </div>
+        <div class="exam-card" id="em-exam" onclick="selectExamMode('exam')">
+            <span class="mc-icon">🏆</span>
+            <div class="mc-label">தேர்வு mode</div>
+            <div class="mc-sub">டைமர் உண்டு · கடுமை</div>
+        </div>
+    </div>
+
+    <!-- Mark type -->
+    <div class="section-label">📝 வினா வகை</div>
+    <div class="mode-cards">
+        <div class="mode-card selected" id="mc-1mark" onclick="selectMode('mcq','1mark')">
+            <span class="mc-icon">🎯</span>
+            <div class="mc-label">1 மார்க்</div>
+            <div class="mc-sub">MCQ</div>
+        </div>
+        <div class="mode-card" id="mc-2mark" onclick="selectMode('desc','2mark')">
+            <span class="mc-icon">📖</span>
+            <div class="mc-label">2 மார்க்</div>
+            <div class="mc-sub">Short Ans</div>
+        </div>
+        <div class="mode-card" id="mc-5mark" onclick="selectMode('desc','5mark')">
+            <span class="mc-icon">📝</span>
+            <div class="mc-label">5 மார்க்</div>
+            <div class="mc-sub">Long Ans</div>
+        </div>
+    </div>
+
+    <div class="section-label">🔢 கேள்விகள் எத்தனை?</div>
+    <div class="pill-group" id="qcount-group">
+        <button class="pill-btn" onclick="selectQCount(5,this)">5</button>
+        <button class="pill-btn selected" onclick="selectQCount(10,this)">10</button>
+        <button class="pill-btn" onclick="selectQCount(15,this)">15</button>
+        <button class="pill-btn" onclick="selectQCount(20,this)">20</button>
+        <button class="pill-btn" onclick="selectQCount(25,this)">25</button>
+        <button class="pill-btn" onclick="selectQCount(30,this)">30</button>
+        <button class="pill-btn" onclick="selectQCount('all',this)">🌟 அனைத்தும்</button>
+    </div>
+
+    <div class="section-label">💪 கடின தன்மை</div>
+    <div class="pill-group" id="diff-group">
+        <button class="pill-btn diff-easy selected" onclick="selectDiff('easy',this)">🟢 எளிமை</button>
+        <button class="pill-btn diff-med" onclick="selectDiff('medium',this)">🟡 நடுத்தரம்</button>
+        <button class="pill-btn diff-hard" onclick="selectDiff('hard',this)">🔴 கடினம்</button>
+        <button class="pill-btn" onclick="selectDiff('all',this)">🌟 அனைத்தும்</button>
+    </div>
+
+    <div style="display:flex;gap:8px;margin-top:18px;">
+        <button style="flex:1;background:linear-gradient(135deg,#1976D2,#1565C0);box-shadow:0 4px 0 #0D47A1;margin:0;font-size:15px;color:#ffffff;" onclick="startQuizWithSettings()" style="background:linear-gradient(135deg,#1976D2,#1565C0);box-shadow:0 4px 0 #1565C0;font-size:16px;letter-spacing:0.3px;">🚀 தொடங்கு!</button>
+        <button style="width:52px;background:#F3F8FF;color:#1565C0;border:2px solid #90CAF9;box-shadow:0 4px 0 #90CAF9;margin:0;font-size:18px;padding:0;border-radius:16px;flex-shrink:0;" onclick="clearSettings()" title="அமைப்பை மீட்டமை">↺</button>
+    </div>
+    <button class="home-link" onclick="showScreen('subject-screen')" style="width:100%;margin-top:10px;">🔙 பின்செல்</button>
+</div>
+
+<div class="container hidden" id="quiz-screen" style="position:relative;" onscroll="">
+    <button class="quiz-back-btn" id="quiz-back-btn-mcq" onclick="confirmQuizBack()" title="பின்செல்">🔙</button>
+    <div class="progress-container" style="margin-top:10px;"><div class="progress-bar" id="mcq-progress"></div></div>
+    <div id="quiz-mode-label" style="font-size:11px;font-weight:800;color:#1976D2;background:#F3F8FF;padding:4px 10px;border-radius:8px;text-align:center;margin-bottom:6px;display:inline-block;width:auto;align-self:center;"></div>
+    <div id="timer-wrap"><div class="timer-badge">⏱️ <span id="time-left">30</span> விநாடிகள்</div></div>
+    <div id="question-text"></div>
+    <div id="options-container" style="margin-top:10px;width:100%;"></div>
+    <div class="practice-hint" id="practice-hint"></div>
+    <button id="next-btn" class="hidden" onclick="nextQuestion()" style="margin-top:16px;background:linear-gradient(135deg,#1976D2,#1565C0);box-shadow:0 4px 0 #1565C0;">அடுத்த கேள்வி ➡️</button>
+</div>
+
+<div class="container hidden" id="desc-quiz-screen" style="position:relative;">
+    <button class="quiz-back-btn" id="quiz-back-btn-desc" onclick="confirmQuizBack()" title="பின்செல்">🔙</button>
+    <div class="progress-container" style="margin-top:10px;"><div class="progress-bar" id="desc-progress"></div></div>
+    <div id="desc-question-text"></div>
+    <button id="show-ans-btn" style="background-color:#1976D2;" onclick="revealDescAnswer()">👀 விடையைக் காட்டு</button>
+    <div id="desc-answer-container" style="
+    background:linear-gradient(135deg,#E8F5E9,#F1F8E9);
+    border:2px solid #22c55e;
+    border-left:5px solid #16a34a;
+    padding:16px 16px 14px;
+    border-radius:16px;
+    margin-top:14px;
+    display:none;
+    white-space:pre-wrap;
+    text-align:left;
+    color:#14532d;
+    font-size:15px;
+    font-weight:700;
+    line-height:1.7;
+    box-shadow:0 4px 16px rgba(22,163,74,0.15);
+"></div>
+    <button id="desc-next-btn" class="hidden" onclick="nextDescQuestion()" style="margin-top:16px;background:linear-gradient(135deg,#1976D2,#1565C0);box-shadow:0 4px 0 #1565C0;">அடுத்த கேள்வி ➡️</button>
+</div>
+
+<div id="confetti-overlay"></div>
+
+<div class="container hidden" id="result-screen">
+    <div id="result-mode-badge" style="margin-bottom:8px;"></div>
+    <div style="background:linear-gradient(135deg,#1976D2,#1976D2);border-radius:20px;padding:20px 16px;margin-bottom:12px;text-align:center;">
+        <div id="result-emoji" style="font-size:3rem;" class="result-anim">🏆</div>
+        <h1 id="feedback-msg" style="color:#fff;font-size:clamp(14px,4vw,18px);margin:6px 0 4px;" class="result-anim"></h1>
+        <h2 id="score-text" style="font-size:clamp(20px,6vw,28px);color:#1976D2;margin:0;" class="score-shine"></h2>
+    </div>
+    <div id="result-stats" style="display:flex;gap:8px;justify-content:center;margin:10px 0;"></div>
+
+    <!-- Action buttons row 1 -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;">
+        <button style="background:#ef4444;box-shadow:0 4px 0 #b91c1c;margin:0;font-size:14px;padding:12px 8px;" onclick="showWrongQuestions()">❌ தவறான வினாக்கள்</button>
+        <button style="background:#1976D2;box-shadow:0 4px 0 #1565C0;margin:0;font-size:14px;padding:12px 8px;" onclick="showAnalysis()">📊 Analysis</button>
+    </div>
+    <!-- Action buttons row 2 -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;">
+        <button class="review-btn" style="margin:0;font-size:14px;padding:12px 8px;" onclick="showReviewScreen()">📝 விடைகள்</button>
+        <button class="cert-btn" style="margin:0;font-size:14px;padding:12px 8px;" onclick="showCertificate()">📜 சான்றிதழ்</button>
+    </div>
+    <!-- Action buttons row 3 -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;">
+        <button style="background:#1976D2;box-shadow:0 4px 0 #1565C0;margin:0;font-size:14px;padding:12px 8px;" onclick="retryQuiz()">🔄 மீண்டும்</button>
+        <button style="background:#1976D2;box-shadow:0 4px 0 #1976D2;margin:0;font-size:14px;padding:12px 8px;" onclick="showScreen('settings-screen')">⚙️ அமைப்பு</button>
+    </div>
+    <button style="background:#1976D2;box-shadow:0 4px 0 #1976D2;margin-top:8px;font-size:14px;padding:12px;" onclick="showScreen('subject-screen')">📚 வேறு பாடம்</button>
+    <button class="home-link" onclick="goHome()" style="width:100%;margin-top:6px;font-size:13px;">🏠 முகப்பு</button>
+</div>
+
+<div class="container hidden" id="review-screen">
+    <p style="font-size:11px;font-weight:800;color:#5C8EC7;text-transform:uppercase;letter-spacing:1px;margin:0 0 12px;text-align:left;">📝 விடைகள் சரிபார்ப்பு</p>
+    <div id="review-content" style="max-height: 60vh; overflow-y: auto; text-align: left; -webkit-overflow-scrolling:touch;"></div>
+    <button class="home-link" onclick="showScreen('result-screen')" style="width: 100%;">🔙 ரிசல்ட்</button>
+</div>
+
+<div class="container hidden" id="desc-result-screen">
+    <div style="font-size:4rem;margin-bottom:10px;">🌟</div>
+    <h1 style="color:#1976D2;">பயிற்சி முடிந்தது!</h1>
+    <p id="desc-result-info" style="color:#5C7DA8;font-weight:700;"></p>
+    <div style="display:flex;gap:10px;margin-top:15px;">
+        <button style="flex:1;background:#1976D2;box-shadow:0 6px 0 #1565C0;margin:0;" onclick="retryQuiz()">🔄 மீண்டும்</button>
+        <button style="flex:1;background:#1976D2;box-shadow:0 6px 0 #1976D2;margin:0;" onclick="showScreen('settings-screen')">⚙️ அமைப்பு</button>
+    </div>
+    <button style="background:#1976D2;box-shadow:0 6px 0 #1976D2;margin-top:10px;" onclick="showScreen('subject-screen')">📚 வேறு பாடம்</button>
+    <button class="home-link" onclick="goHome()" style="width:100%;margin-top:5px;">🏠 முகப்பு</button>
+</div>
+
+<!-- ── WRONG QUESTIONS SCREEN ── -->
+<div class="container hidden" id="wrong-questions-screen">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+        <h2 style="color:#ef4444;margin:0;font-size:clamp(16px,4vw,20px);">❌ தவறான வினாக்கள்</h2>
+        <button style="background:#fef2f2;color:#ef4444;border:2px solid #fecaca;box-shadow:none;width:auto;margin:0;padding:8px 14px;font-size:13px;border-radius:12px;" onclick="practiceWrongQuestions()">🔄 மீண்டும் பயில்</button>
+    </div>
+    <div id="wrong-questions-list" style="max-height:65vh;overflow-y:auto;-webkit-overflow-scrolling:touch;"></div>
+    <button class="home-link" onclick="showScreen('result-screen')" style="width:100%;margin-top:10px;">🔙 ரிசல்ட்</button>
+</div>
+
+<!-- ── ANALYSIS SCREEN ── -->
+<div class="container hidden" id="analysis-screen">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+        <h2 style="color:#1976D2;margin:0;font-size:clamp(16px,4vw,20px);">📊 செயல்திறன் பகுப்பாய்வு</h2>
+    </div>
+    <div id="analysis-content" style="max-height:70vh;overflow-y:auto;-webkit-overflow-scrolling:touch;"></div>
+    <button class="home-link" onclick="showScreen('result-screen')" style="width:100%;margin-top:10px;">🔙 ரிசல்ட்</button>
+</div>
+
+<div class="container hidden" id="certificate-screen">
+    <div id="certificate-content">
+        <div class="cert-inner">
+            <img src="20260315_085358.png" alt="உங்கள் ஆசிரியர் Logo" class="cert-logo" onerror="this.outerHTML='<div style=\'font-size: 4rem;\'>🎓</div>'">
+            <h1 class="cert-title">பாராட்டுச் சான்றிதழ்</h1>
+            <p class="cert-subtitle">Certificate of Excellence</p>
+            
+            <p class="cert-text">இந்தச் சான்றிதழ்</p>
+            <h2 id="cert-name">மாணவர் பெயர்</h2>
+            <p id="cert-class-display"></p>
+            
+            <p class="cert-text">
+                அவர்களுக்கு, <br>
+                <span id="cert-subject">பாடம்</span> <br>
+                பாடத்தில் நடைபெற்ற வினாடி-வினா தேர்வில் சிறப்பாகப் பங்கேற்று
+            </p>
+            
+            <div class="cert-score-box">
+                <h3>மதிப்பெண்கள்: <br><span id="cert-score" style="font-size: 1.2em;">0 / 0</span></h3>
+            </div>
+            
+            <p class="cert-text">பெற்றமைக்காக அன்புடன் வழங்கப்படுகிறது.</p>
+            
+            <div class="cert-footer">
+                <div class="cert-footer-col">
+                    <p id="cert-date" style="color: #0D2137; margin-bottom: 5px;">தேதி</p>
+                    <p style="border-top: 2px solid #BBDEFB; padding-top: 5px; color: #5C7DA8;">தேதி (Date)</p>
+                </div>
+                <div class="cert-footer-col">
+                    <div class="cert-seal">🏆</div>
+                </div>
+                <div class="cert-footer-col">
+                    <p style="color: #0D2137; font-family: cursive; margin-bottom: 5px;" class="cert-sign">உங்கள் ஆசிரியர்</p>
+                    <p style="border-top: 2px solid #BBDEFB; padding-top: 5px; color: #5C7DA8;">கையொப்பம்</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="no-print" style="display:flex; gap:10px; width:100%; margin-top:20px;">
+        <button class="cert-btn" onclick="window.print()" style="flex:1; margin:0; background: linear-gradient(135deg, #1976D2, #1565C0); box-shadow: 0 6px 0 #1565C0;">🖨️ PDF / Print</button>
+        <button class="home-link" onclick="showScreen('result-screen')" style="flex:1; margin:0; background:#F3F8FF; color:#1976D2; border:none; box-shadow: 0 6px 0 #BBDEFB;">🔙 ரிசல்ட்</button>
+    </div>
+</div>
+
+    </div><!-- /screen-wrap -->
+
+    <!-- BOTTOM NAV -->
+    <div id="bottom-nav" style="display:none;">
+        <button class="nav-item active" id="nav-home" onclick="navTo('subject')">
+            <div class="nav-dot"></div>
+            <div class="nav-icon">🏠</div>
+            <div class="nav-label">முகப்பு</div>
+        </button>
+        <button class="nav-item" id="nav-settings" onclick="navTo('settings')">
+            <div class="nav-dot"></div>
+            <div class="nav-icon">⚙️</div>
+            <div class="nav-label">அமைப்பு</div>
+        </button>
+        <button class="nav-item" id="nav-profile" onclick="navTo('profile')">
+            <div class="nav-dot"></div>
+            <div class="nav-icon">👤</div>
+            <div class="nav-label">மாணவர்</div>
+        </button>
+    </div>
+
+</div><!-- /app-shell -->
+
+<script src="app.js"></script>
+<script>
+
+// Dynamic scroll height fix
+function fixScrollHeights() {
+    var screenH = window.innerHeight || document.documentElement.clientHeight;
+    var reviewContent = document.getElementById('review-content');
+    var wrongList = document.getElementById('wrong-questions-list');
+    var analysisContent = document.getElementById('analysis-content');
+    var maxH = Math.floor(screenH * 0.58) + 'px';
+    if (reviewContent) reviewContent.style.maxHeight = maxH;
+    if (wrongList)     wrongList.style.maxHeight     = maxH;
+    if (analysisContent) analysisContent.style.maxHeight = maxH;
+}
+window.addEventListener('resize', fixScrollHeights);
+
+
+// ── App Shell Navigation Engine
+var _currentScreen = 'student-login-screen';
+var _screenTitles = {
+    'student-login-screen':  'உங்கள் ஆசிரியர்',
+    'subject-screen':        'முகப்பு',
+    'settings-screen':       'தேர்வு அமைப்பு',
+    'quiz-screen':           'வினாடி வினா 🎯',
+    'desc-quiz-screen':      'படிப்பு பயிற்சி 📖',
+    'result-screen':         'முடிவுகள் 🏆',
+    'review-screen':         'விடைகள் சரிபார்',
+    'wrong-questions-screen':'தவறான வினாக்கள் ❌',
+    'analysis-screen':       'Analysis 📊',
+    'desc-result-screen':    'பயிற்சி முடிந்தது 🌟',
+    'certificate-screen':    'சான்றிதழ் 📜',
+};
+var _backMap = {
+    'subject-screen':         'student-login-screen',
+    'settings-screen':        'subject-screen',
+    'quiz-screen':            'settings-screen',
+    'desc-quiz-screen':       'settings-screen',
+    'result-screen':          'subject-screen',
+    'review-screen':          'result-screen',
+    'wrong-questions-screen': 'result-screen',
+    'analysis-screen':        'result-screen',
+    'desc-result-screen':     'subject-screen',
+    'certificate-screen':     'result-screen',
+};
+var _noBackBtn  = ['student-login-screen','subject-screen'];
+var _showNavBar = ['subject-screen','settings-screen'];
+var _quizScreens= ['quiz-screen','desc-quiz-screen'];
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Hide all containers on load
+    document.querySelectorAll('.container').forEach(function(el) {
+        el.classList.add('hidden');
+    });
+    // Show splash then login
+    setTimeout(function() {
+        var splash = document.getElementById('splash-screen');
+        if (splash) { splash.classList.add('hide'); setTimeout(function(){ splash.style.display='none'; },500); }
+        _activateScreen('student-login-screen');
+        fixScrollHeights();
+    }, 1800);
+});
+
+function _activateScreen(id) {
+    // Hide all containers (app.js pattern)
+    document.querySelectorAll('.container').forEach(function(s) {
+        s.classList.add('hidden');
+    });
+    var target = document.getElementById(id);
+    if (!target) return;
+    target.classList.remove('hidden');
+    _currentScreen = id;
+
+    // Header
+    var title = _screenTitles[id] || '';
+    document.getElementById('header-title').textContent = title;
+
+    // Back button
+    var backBtn = document.getElementById('header-back-btn');
+    if (_noBackBtn.indexOf(id) >= 0) {
+        backBtn.style.opacity = '0'; backBtn.style.pointerEvents = 'none';
+    } else {
+        backBtn.style.opacity = '1'; backBtn.style.pointerEvents = 'auto';
+    }
+
+    // Load home stats when landing on subject screen
+    if (id === 'subject-screen') {
+        setTimeout(loadHomeStats, 300);
+        // Reset subject card to first
+        var firstCard = document.querySelector('.subj-card');
+        if (firstCard && document.getElementById('student-subject-select').value === '') {
+            setSubjectCard(firstCard, 'தமிழ்');
+        }
+    }
+    // Bottom nav
+    var nav = document.getElementById('bottom-nav');
+    nav.style.display = _showNavBar.indexOf(id) >= 0 ? 'flex' : 'none';
+    if (_showNavBar.indexOf(id) >= 0) {
+        document.querySelectorAll('.nav-item').forEach(function(n){ n.classList.remove('active'); });
+        if (id === 'subject-screen') document.getElementById('nav-home').classList.add('active');
+        if (id === 'settings-screen') document.getElementById('nav-settings').classList.add('active');
+    }
+}
+
+// Register as _inlineShowScreen so app.js delegates here
+window._inlineShowScreen = function(id) {
+    window.showScreen(id);
+};
+
+// Override showScreen from app.js  
+window.showScreen = function(id) {
+    if (id === 'role-screen') id = 'student-login-screen';
+    if (id === 'admin-login-screen' || id === 'admin-screen') return;
+
+    _activateScreen(id);
+
+    // Confetti on result
+    if (id === 'result-screen') setTimeout(launchConfetti, 300);
+    else stopConfetti();
+
+    // Practice mode hook
+    if (id === 'quiz-screen') {
+        _resetPracticeHook();
+        document.querySelectorAll('.quiz-back-btn').forEach(function(b){
+            b.style.display = (window.studentExamMode === 'exam') ? 'none' : '';
+        });
+        if (window.studentExamMode === 'practice') setTimeout(_hookPracticeMode, 120);
+        else {
+            var ml = document.getElementById('quiz-mode-label');
+            if (ml) ml.textContent = '🏆 தேர்வு mode';
+        }
+    }
+
+    // Result mode badge
+    if (id === 'result-screen') {
+        var badge = document.getElementById('result-mode-badge');
+        if (badge) {
+            if (window.studentExamMode === 'exam') {
+                badge.style.cssText = 'display:inline-block;padding:4px 14px;border-radius:20px;font-size:11px;font-weight:800;background:#fee2e2;color:#b91c1c;margin-bottom:6px;';
+                badge.textContent = '🏆 தேர்வு mode';
+            } else {
+                badge.style.cssText = 'display:inline-block;padding:4px 14px;border-radius:20px;font-size:11px;font-weight:800;background:#E3F2FD;color:#1565C0;margin-bottom:6px;';
+                badge.textContent = '📖 பயிற்சி mode';
+            }
+        }
+    }
+};
+
+function headerBack() {
+    var dest = _backMap[_currentScreen];
+    if (!dest) return;
+    if (_quizScreens.indexOf(_currentScreen) >= 0) {
+        confirmQuizBack(); return;
+    }
+    _activateScreen(dest);
+    if (typeof stopConfetti === 'function') stopConfetti();
+}
+
+function navTo(tab) {
+    if (tab === 'subject')  showScreen('subject-screen');
+    if (tab === 'settings') showScreen('settings-screen');
+    if (tab === 'profile')  {
+        // Show student info modal
+        showModal({ icon:'👤', title: (loggedInStudent || 'மாணவர்'),
+            msg: loggedInClass ? loggedInClass + ' ஆம் வகுப்பு' : '',
+            confirmText:'சரி', singleBtn:true });
+    }
+}
+
+// goHome — single authoritative function
+window.goHome = function() {
+    if (typeof quizActive !== 'undefined') quizActive = false;
+    if (typeof timerInterval !== 'undefined') clearInterval(timerInterval);
+    if (typeof stopConfetti === 'function') stopConfetti();
+    _activateScreen('student-login-screen');
+    var nameEl = document.getElementById('student-name');
+    var clsEl  = document.getElementById('student-class');
+    if (nameEl) nameEl.value = '';
+    if (clsEl)  clsEl.value  = '';
+};
+window.studentLogout = function() { window.goHome(); };
+window.checkAdminLogin    = function(){};
+window.verifyTeacherLogin = function(){};
+// Subject card selection
+function setSubjectCard(el, val) {
+    document.getElementById('student-subject-select').value = val;
+    document.querySelectorAll('.subj-card').forEach(function(c) {
+        c.style.borderColor = '#BBDEFB';
+        c.style.background  = '#fff';
+        c.style.boxShadow   = '0 2px 8px rgba(0,0,0,0.05)';
+        var lbl = c.querySelector('div:nth-child(2)');
+        if (lbl) lbl.style.color = '#1976D2';
+    });
+    el.style.borderColor = '#1976D2';
+    el.style.background  = '#F3F8FF';
+    el.style.boxShadow   = '0 4px 12px rgba(30,58,138,0.15)';
+    var lbl = el.querySelector('div:nth-child(2)');
+    if (lbl) lbl.style.color = '#1976D2';
+}
+
+// Load home stats from Firebase
+function loadHomeStats() {
+    var totalEl = document.getElementById('home-total-quizzes');
+    var bestEl  = document.getElementById('home-best-score');
+    var strEl   = document.getElementById('home-streak');
+    if (!totalEl || typeof db === 'undefined') return;
+    db.collection('quiz_scores')
+      .where('studentName','==', loggedInStudent)
+      .where('studentClass','==', loggedInClass)
+      .get().then(function(snap) {
+        if (snap.empty) { if(totalEl) totalEl.textContent='0'; return; }
+        var count = snap.size;
+        var best  = 0;
+        snap.forEach(function(d) {
+            var p = d.data().total > 0 ? Math.round((d.data().score/d.data().total)*100) : 0;
+            if (p > best) best = p;
+        });
+        if (totalEl) totalEl.textContent = count;
+        if (bestEl)  bestEl.textContent  = best + '%';
+        if (strEl)   strEl.textContent   = count >= 7 ? '🔥' : count >= 3 ? '⭐' : '🌱';
+    }).catch(function(){});
+}
+
+// Quick access helpers — go to last result screens
+function goToLastResult() {
+    if (typeof userAnswersLog !== 'undefined' && userAnswersLog.length > 0) {
+        showScreen('result-screen');
+    } else {
+        showModal({icon:'ℹ️', title:'தேர்வு இல்லை', msg:'முதலில் ஒரு தேர்வு எழுதுங்கள்!', singleBtn:true, confirmText:'சரி'});
+    }
+}
+function goToLastCertificate() {
+    if (typeof score !== 'undefined' && typeof currentQuestions !== 'undefined' && currentQuestions.length > 0) {
+        showCertificate();
+    } else {
+        showModal({icon:'📜', title:'சான்றிதழ் இல்லை', msg:'முதலில் ஒரு தேர்வு எழுதி மதிப்பெண் பெறுங்கள்!', singleBtn:true, confirmText:'சரி'});
+    }
+}
+function goToWrongQs() {
+    if (typeof userAnswersLog !== 'undefined' && userAnswersLog.length > 0) {
+        showWrongQuestions();
+    } else {
+        showModal({icon:'❌', title:'தேர்வு இல்லை', msg:'முதலில் ஒரு தேர்வு எழுதுங்கள்!', singleBtn:true, confirmText:'சரி'});
+    }
+}
+function goToReview() {
+    if (typeof userAnswersLog !== 'undefined' && userAnswersLog.length > 0) {
+        showReviewScreen();
+    } else {
+        showModal({icon:'📝', title:'தேர்வு இல்லை', msg:'முதலில் ஒரு தேர்வு எழுதுங்கள்!', singleBtn:true, confirmText:'சரி'});
+    }
+}
+
+</script>
+</body>
+</html>
