@@ -1,0 +1,42 @@
+{
+  "name": "உங்கள் ஆசிரியர்",
+  "short_name": "ஆசிரியர்",
+  "description": "Tamil Nadu School Quiz — அறிவின் ஒளி, வளர்ச்சியின் பாதை",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#4f46e5",
+  "theme_color": "#4f46e5",
+  "lang": "ta-IN",
+  "dir": "ltr",
+  "categories": ["education"],
+  "icons": [
+    {
+      "src": "20260315_085358.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "20260315_085358.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "20260315_085358.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "மாணவர் Login",
+      "url": "./",
+      "icons": [{ "src": "20260315_085358.png", "sizes": "192x192" }]
+    }
+  ],
+  "prefer_related_applications": false
+}
